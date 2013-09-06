@@ -1,0 +1,205 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<script src="http://ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js"></script>
+<style>
+td{
+width:50px;
+height:50px;
+margin:0;
+}
+tr{
+padding:0;
+margin:0;
+}
+table{
+	margin:0;
+	padding:0;
+}
+.exit{
+	background-color:red;
+}
+.player{
+	background-color:green;
+}
+.block{
+	background-color:black;
+}
+.enemy{
+	background-color:blue;
+}
+</style>
+<script>
+
+
+
+
+
+
+function moveValidation(newCellId){
+	$('.enemy').each(function(){
+	chance=Math.floor((Math.random()*10)+1)
+	if(chance==3){
+		cellId=$(this).attr('cellId');
+		newCellId_temp=parseInt(cellId)+1;
+		$(this).attr('class','');
+		$('[cellId="'+newCellId_temp+'"]').attr('class','enemy')
+	}
+	else if(chance==4){
+		cellId=$(this).attr('cellId');
+		newCellId_temp=parseInt(cellId)+1;
+		$(this).attr('class','');
+		$('[cellId="'+newCellId_temp+'"]').attr('class','enemy')
+	}
+	else if(chance==5){
+		cellId=$(this).attr('cellId');
+		newCellId_temp=parseInt(cellId)+5;
+		$(this).attr('class','');
+		$('[cellId="'+newCellId_temp+'"]').attr('class','enemy')
+	}
+	else if(chance==6){
+		cellId=$(this).attr('cellId');
+		newCellId_temp=parseInt(cellId)-5;
+		$(this).attr('class','');
+		$('[cellId="'+newCellId_temp+'"]').attr('class','enemy')
+	}
+	
+	});
+	if($('[cellId="'+newCellId+'"]').attr('class')!='' && $('[cellId="'+newCellId+'"]').attr('class')!=undefined){
+		alert('This is not a regular cell!')
+		return false;
+	}
+}
+function moveUp(){
+
+	currentCellId=$(".player").attr('cellId')
+	newCellId=parseInt(currentCellId)+5; //Static grid, +5=a row
+	console.log("new Cell ID"+newCellId);
+	mv=moveValidation(newCellId);
+	if(mv!=false){
+	$('[cellId="'+currentCellId+'"]').attr('class','');
+	$('[cellId="'+newCellId+'"]').attr('class','player');
+	}
+	  }
+function attack(){
+	cellType=getCellType();
+	newCellId=parseInt($('.player').attr('cellId'))+5;
+	if(cellType=="enemy"){
+		$("[cellId='"+newCellId+"']").attr('class','');
+	}
+	else{
+		alert('You can\'t attack this type of cell!')
+	}
+}
+ function moveDown(){
+	currentCellId=$(".player").attr('cellId')
+	newCellId=parseInt(currentCellId)-5; //Static grid, +5=a row
+	console.log("new Cell ID"+newCellId);
+	mv=moveValidation(newCellId);
+	if(mv!=false){
+	$('[cellId="'+currentCellId+'"]').attr('class','');
+	$('[cellId="'+newCellId+'"]').attr('class','player');
+	}
+  }
+function moveLeft(){
+	//For some reason moveLeft and moveRight make no sense.
+	currentCellId=$(".player").attr('cellId')
+	newCellId=parseInt(currentCellId)+1; //Static grid, +5=a row
+	console.log("new Cell ID"+newCellId);
+	mv=moveValidation(newCellId);
+	if(mv!=false){
+	$('[cellId="'+currentCellId+'"]').attr('class','');
+	$('[cellId="'+newCellId+'"]').attr('class','player');
+	}
+
+}
+
+function getCellType(direction){
+   if(typeof(direction)==='undefined') direction='up';
+	if(direction=='up'){
+	newCellId=parseInt($(".player").attr('cellId'))+5;
+	}
+	else if(direction=='right'){
+	newCellId=parseInt($('.player').attr('cellId'))+1;
+	}
+	else if(direction=='left'){
+	newCellId=parseInt($('.player').attr('cellId'))-1;
+	}
+	else if(direction=='down'){
+	newCellId=parseInt($('.player').attr('cellId'))-5;
+	}
+	if($('[cellId="'+newCellId+'"]').attr('class')!='' && $('[cellId="'+newCellId+'"]').attr('class')!=undefined){
+		return $('[cellId="'+newCellId+'"]').attr('class');
+	}
+	else{
+		return 'normal'
+	}
+		
+}
+function enterIn(){
+	cellType=getCellType();
+	
+	if(cellType=='exit'){
+		alert('You win!');
+	}
+	else{
+		alert('You do not win :(')
+	}
+}
+
+function moveRight(){
+	//For some reason moveLeft and moveRight make no sense.
+	currentCellId=$(".player").attr('cellId')
+	newCellId=parseInt(currentCellId)-1; //Static grid, +5=a row
+	console.log("new Cell ID"+newCellId);
+	mv=moveValidation(newCellId);
+	if(mv!=false){
+	$('[cellId="'+currentCellId+'"]').attr('class','');
+	$('[cellId="'+newCellId+'"]').attr('class','player');
+	}
+
+}
+
+   $(function(){
+   	  $("#code").removeAttr("disabled");
+	  $("#submit").removeAttr("disabled");
+      $("td:empty").html("&nbsp;");
+	  i=1;
+	  $.each($("td").get().reverse(),function(){
+		$(this).attr("cellId",i);
+		result=Math.floor((Math.random()*10)+1);
+		if(result==3 && i!=24 && i!=5 && i!=19 && $(this).attr('class')==undefined){
+		chance=result=Math.floor((Math.random()*3)+1);
+		if(chance==3){
+		$(this).attr('class','enemy'); //One in a 3 chance for a block to be an enemy
+		}
+		else{
+		$(this).attr('class','block');
+		}
+		}
+		i=i+1;
+	  })
+	  $('#submit').click(function(){
+	  $("#code").attr("disabled","disabled");
+	  $("#submit").attr("disabled","disabled");
+		eval($('#code').val())
+		
+		return false;
+	  });
+    });
+</script>
+</head>
+<body>
+<table id="playingField" border="1">
+<tr><td></td><td class="exit"></td><td></td><td></td><td></td></tr>
+<tr><td></td><td ></td><td ></td><td></td><td></td></tr>
+<tr><td></td><td></td><td></td ><td></td><td></td></tr>
+<tr><td></td><td></td><td></td><td></td><td></td></tr>
+<tr><td class="player"></td><td></td><td></td><td></td><td></td></tr>
+</table>
+<textarea rows="5" cols="40" id="code">
+</textarea><br>
+<input type="submit" value="Execute" id="submit">
+
+</body>
+</html>
